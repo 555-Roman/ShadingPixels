@@ -39,4 +39,5 @@ void main() {
 
     normalTexture = texture(normals, samplingCoord);
     specularTexture = texture(specular, samplingCoord);
+    if (specularTexture.a == 0.0) specularTexture.a = 1.0;
 }
