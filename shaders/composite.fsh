@@ -106,19 +106,7 @@ void main() {
 						 sunlightColorDay     * multiplierDay     +
 						 sunlightColorSunset  * multiplierSunset  ;
 
-	float timeFading = 0.0;
-	// nothing -> full sunrise
-	if (time >= timeSunriseBegin && time < timeSunriseFull) {
-		timeFading = (time - timeSunriseBegin) / (timeSunriseFull - timeSunriseBegin);
-	}
-	// full sunrise -> full sunset
-	if (time >= float(int(timeSunriseFull) % 24000) && time < timeSunsetFull) {
-		timeFading = 1.0;
-	}
-	// full sunset -> nothing
-	if (time >= timeSunsetFull && time < timeNightBegin) {
-		timeFading = 1.0 - (time - timeSunsetFull) / (timeNightBegin - timeSunsetFull);
-	}
+	float timeFading = max(multiplierSunrise, multiplierSunset);
 
 	if (dot(mat3(gbufferModelView) * playerLookVector, sunPosition) > 0.0 && (worldTime >= 23215 || worldTime < 12785))
 		color.rgb += timeFading * cornerFading * sunlightColor * 0.2 * vec3(radialBlur(sunScreenPos, texcoord));
