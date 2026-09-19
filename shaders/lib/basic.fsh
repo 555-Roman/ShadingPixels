@@ -40,9 +40,30 @@ float getHeight(vec2 texcoord) {
 }
 
 vec2 parallax(vec2 texcoord, vec3 viewDir) {
-    float height = getHeight(texcoord);
-    vec2 p = viewDir.xy / viewDir.z * (height * 0.25);
-    return texcoord - p;
+    // number of depth layers
+    const float numLayers = 1024;
+    // calculate the size of each layer
+    float layerDepth = 1.0 / numLayers;
+    // depth of current layer
+    float currentLayerDepth = 0.0;
+    // the amount to shift the texture coordinates per layer (from vector P)
+    vec2 P = viewDir.xy * 0.25;
+    vec2 deltaTexCoords = P / numLayers;
+
+    // get initial values
+    vec2  currentTexCoords     = texcoord;
+    float currentDepthMapValue = getHeight(currentTexCoords);
+
+    while (currentLayerDepth < currentDepthMapValue) {
+        // shift texture coordinates along direction of P
+        currentTexCoords -= deltaTexCoords;
+        // get depthmap value at current texture coordinates
+        currentDepthMapValue = getHeight(currentTexCoords);
+        // get depth of next layer
+        currentLayerDepth += layerDepth;
+    }
+
+    return currentTexCoords;
 }
 
 void main() {
@@ -64,6 +85,4 @@ void main() {
     normalTexture = textureLod(normals, samplingCoord, 0.0);
     specularTexture = textureLod(specular, samplingCoord, 0.0);
     if (specularTexture.a == 0.0) specularTexture.a = 1.0;
-
-//    color.rgb = vec3(textureLod(normals, samplingCoord, 0.0).r);
 }

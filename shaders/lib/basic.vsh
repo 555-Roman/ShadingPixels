@@ -12,7 +12,6 @@ out vec3 normal;
 out vec3 tangent;
 out vec2 textureMinBounds;
 out vec2 singleTexSize;
-out vec3 fragPosView;
 out vec3 tangentViewDir;
 
 mat3 tbnNormalTangent(vec3 normal, vec3 tangent) {
@@ -34,6 +33,6 @@ void main() {
     vec2 halfSize = abs(texcoord - mc_midTexCoord);
     textureMinBounds = mc_midTexCoord - halfSize;
     singleTexSize = halfSize * 2.0;
-    fragPosView = (gl_ModelViewMatrix * gl_Vertex).xyz;
+    vec3 fragPosView = (gl_ModelViewMatrix * gl_Vertex).xyz;
     tangentViewDir = normalize(-fragPosView) * TBN;
 }
