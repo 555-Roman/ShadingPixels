@@ -36,6 +36,7 @@ void main() {
     vec2 samplingCoord = texcoord;
 
     color = texture(gtexture, texcoord) * glcolor;
+    color.rgb = pow(color.rgb, vec3(2.2));
 
     normalTexture = texture(normals, samplingCoord);
     specularTexture = texture(specular, samplingCoord);

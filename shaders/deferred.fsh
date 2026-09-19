@@ -217,10 +217,12 @@ void main() {
 	cosThetaI = dot(geoNormal, worldViewVector);
 	vec3 F = vec3(0.0);
 	if (metallic > 0.0) {
-		if (metalId >= 8) {
+		if (metalId == 25) {
 			F = schlickFresnel(color.rgb, cosThetaI);
-		} else {
+		} else if (metalId < 8) {
 			F = fresnelConductor(hardcodedMetalN[metalId], hardcodedMetalK[metalId], cosThetaI);
+		} else {
+			F = vec3(0.0);
 		}
 	} else {
 		float sqrtF0 = sqrt(dielectricF0);
