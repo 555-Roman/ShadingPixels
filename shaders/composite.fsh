@@ -1,7 +1,7 @@
 #version 330 compatibility
 
 uniform sampler2D colortex0;
-uniform sampler2D depthtex0;
+uniform sampler2D depthtex1;
 
 uniform vec3 sunPosition;
 uniform vec3 playerLookVector;
@@ -33,7 +33,7 @@ vec3 radialBlur(vec2 center, vec2 texcoord) {
 	vec3 color = vec3(0.0);
 	for (int i = 0; i < nSamples; i++) {
 		float scale = blurStart + (float(i) * precompute);
-		color += texture(depthtex0, texcoord * scale + center).r == 1.0 ? 1.0 : 0.0;
+		color += texture(depthtex1, texcoord * scale + center).r == 1.0 ? 1.0 : 0.0;
 	}
 
 	color /= float(nSamples);
