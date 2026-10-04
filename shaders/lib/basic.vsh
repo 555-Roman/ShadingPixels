@@ -1,5 +1,7 @@
 #version 330 compatibility
 
+//#define PARALLAX
+
 uniform mat4 gbufferModelViewInverse;
 
 in vec4 at_tangent;
@@ -10,9 +12,11 @@ out vec2 texcoord;
 out vec4 glcolor;
 out vec3 normal;
 out vec3 tangent;
+#ifdef PARALLAX
 out vec2 textureMinBounds;
 out vec2 singleTexSize;
 out vec3 tangentViewDir;
+#endif
 
 mat3 tbnNormalTangent(vec3 normal, vec3 tangent) {
     vec3 bitangent = cross(tangent, normal);
@@ -30,9 +34,11 @@ void main() {
     mat3 TBN = tbnNormalTangent(normal, tangent);
     normal = mat3(gbufferModelViewInverse) * normal;
     tangent = mat3(gbufferModelViewInverse) * tangent;
+#ifdef PARALLAX
     vec2 halfSize = abs(texcoord - mc_midTexCoord);
     textureMinBounds = mc_midTexCoord - halfSize;
     singleTexSize = halfSize * 2.0;
     vec3 fragPosView = (gl_ModelViewMatrix * gl_Vertex).xyz;
     tangentViewDir = normalize(-fragPosView) * TBN;
+#endif
 }

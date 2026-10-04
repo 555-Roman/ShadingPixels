@@ -1,5 +1,7 @@
 #version 330 compatibility
 
+//#define PARALLAX
+
 uniform sampler2D lightmap;
 uniform sampler2D gtexture;
 uniform sampler2D normals;
@@ -12,9 +14,11 @@ in vec2 texcoord;
 in vec4 glcolor;
 in vec3 normal;
 in vec3 tangent;
+#ifdef PARALLAX
 in vec2 textureMinBounds;
 in vec2 singleTexSize;
 in vec3 tangentViewDir;
+#endif
 
 /* RENDERTARGETS: 0,1,2,3,4,5 */
 layout(location = 0) out vec4 color;
@@ -24,6 +28,7 @@ layout(location = 3) out vec4 encodedTangent;
 layout(location = 4) out vec4 normalTexture;
 layout(location = 5) out vec4 specularTexture;
 
+#ifdef PARALLAX
 vec2 localToAtlas(vec2 texcoord) {
     vec2 localCoord = mod(texcoord, 1.0);
 
@@ -65,24 +70,28 @@ vec2 parallax(vec2 texcoord, vec3 viewDir) {
 
     return currentTexCoords;
 }
+#endif
 
 void main() {
     color = textureLod(gtexture, texcoord, 0.0) * glcolor;
     if (color.a < alphaTestRef) {
         discard;
     }
-    color.rgb = pow(color.rgb, vec3(2.2));
     lightmapData = vec4(lmcoord, 0.0, 1.0);
     encodedNormal = vec4(normal * 0.5 + 0.5, 1.0);
     encodedTangent = vec4(tangent * 0.5 + 0.5, 1.0);
 
-    vec2 samplingCoord = texcoord;
+    normalTexture = textureLod(normals, texcoord, 0.0);
+    specularTexture = textureLod(specular, texcoord, 0.0);
 
-    samplingCoord = localToAtlas(parallax(atlasToLocal(texcoord), normalize(tangentViewDir)));
+#ifdef PARALLAX
+    vec2 samplingCoord = localToAtlas(parallax(atlasToLocal(texcoord), normalize(tangentViewDir)));
 
     color = textureLod(gtexture, samplingCoord, 0.0) * glcolor;
-    color.rgb = pow(color.rgb, vec3(2.2));
     normalTexture = textureLod(normals, samplingCoord, 0.0);
     specularTexture = textureLod(specular, samplingCoord, 0.0);
+#endif
+
+    color.rgb = pow(color.rgb, vec3(2.2));
     if (specularTexture.a == 0.0) specularTexture.a = 1.0;
 }

@@ -33,7 +33,7 @@ layout(location = 0) out vec4 color;
 const int colortex0Format = RGB16;
 */
 
-const float sunPathRotation = -30.0;
+const float sunPathRotation = -40.0;
 const int shadowMapResolution = 4096;
 //const float shadowDistanceRenderMul = 1.0;
 //const float shadowDistance = 128.0;
